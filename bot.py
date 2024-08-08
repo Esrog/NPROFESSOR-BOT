@@ -8,7 +8,7 @@ from pyrogram import types
 from database.ia_filterdb import Media
 from database.users_chats_db import db
 from info import API_ID, API_HASH, BOT_TOKEN, LOG_CHANNEL, UPTIME, WEB_SUPPORT, LOG_MSG
-from utils import temp, repo, license, copyright, version
+from utils import temp, __repo__, __license__, __copyright__, __version__
 from typing import Union, Optional, AsyncGenerator
 
 from plugins import web_server 
@@ -18,12 +18,13 @@ from aiohttp import web
 logging.config.fileConfig("logging.conf")
 logging.getLogger().setLevel(logging.INFO)
 logging.getLogger("cinemagoer").setLevel(logging.ERROR)
-logger = logging.getLogger(name)
+logger = logging.getLogger(__name__)
+
 
 class Bot(Client):
 
-    def init(self):
-        super().init(
+    def __init__(self):
+        super().__init__(
             name="Professor-Bot",
             api_id=API_ID,
             api_hash=API_HASH,
@@ -51,15 +52,9 @@ class Bot(Client):
         curr = datetime.datetime.now(pytz.timezone("Asia/Kolkata"))
         date = curr.strftime('%d %B, %Y')
         tame = curr.strftime('%I:%M:%S %p')
-        logger.info(LOG_MSG.format(me.first_name, date, tame, repo, version, license, copyright))
-        try: 
-            await self.send_message(
-                LOG_CHANNEL, 
-                text=LOG_MSG.format(me.first_name, date, tame, repo, version, license, copyright), 
-                disable_web_page_preview=True
-            )   
-        except Exception as e: 
-            logger.warning(f"Bot Isn't Able To Send Message To LOG_CHANNEL \n{e}")
+        logger.info(LOG_MSG.format(me.first_name, date, tame, __repo__, __version__, __license__, __copyright__))
+        try: await self.send_message(LOG_CHANNEL, text=LOG_MSG.format(me.first_name, date, tame, __repo__, __version__, __license__, __copyright__), disable_web_page_preview=True)   
+        except Exception as e: logger.warning(f"Bot Isn't Able To Send Message To LOG_CHANNEL \n{e}")
         if WEB_SUPPORT:
             app = web.AppRunner(await web_server())
             await app.setup()
@@ -81,6 +76,8 @@ class Bot(Client):
                 yield message
                 current += 1
 
+
+        
 Bot().run()
 
 
